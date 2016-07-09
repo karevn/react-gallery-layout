@@ -1,0 +1,26 @@
+{
+  "name": "react-gallery",
+  "version": "0.1.0",
+  "description": "React.js based gallery component",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "reactjs",
+    "react",
+    "gallery"
+  ],
+  "author": "Nikolay Karev <karev.n@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "binpack-2d": "^1.1.1",
+    "classnames": "^2.2.3",
+    "css-element-queries": "^0.3.2",
+    "layouts": "/Users/karevn/src/layouts",
+    "react": "^15.0.1",
+    "react-dom": "^15.0.1",
+    "throttle-debounce": "^1.0.1"
+  },
+  "devDependencies": {}
+}

@@ -1,0 +1,14 @@
+ul.react-gallery
+  position: relative
+
+li.react-gallery-item
+  position: absolute
+  display: block
+  transition: opacity 0.3s
+  opacity: 0
+  img
+    display: block
+
+  &.react-gallery-has-size
+    opacity: 1
+    transition: opacity 0.3s, transform 0.3s
