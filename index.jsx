@@ -4,10 +4,15 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Item from './src/item'
 import pack from './src/pack'
-import {keys, filter, until} from './src/utils'
+
 import throttle from 'throttle-debounce/throttle'
 
+import ResizeSensor from './src/resize'
+
 function measure (component) {
+  if (component.measure) {
+    return component.measure()
+  }
   const node = ReactDOM.findDOMNode(component)
   return {
     width: Math.floor(node.offsetWidth),
@@ -16,19 +21,21 @@ function measure (component) {
 }
 
 function getHeight (rects) {
-  return rects.reduce(((height, rect) => {
-    if (rect.y == undefined)
+  return rects.reduce((height, rect) => {
+    if (rect.y === undefined) {
       return height
+    }
     return Math.max(height, rect.y + rect.height)
-  }), 0)
+  }, 0)
 }
 
 function getWidth (rects) {
-  return rects.reduce(((width, rect)=> {
-     if (rect.x == undefined)
+  return rects.reduce((width, rect) => {
+    if (rect.x === undefined) {
       return width
+    }
     return Math.max(width, rect.x + rect.width)
-  }), 0)
+  }, 0)
 }
 
 export default class Gallery extends React.Component {
@@ -37,47 +44,77 @@ export default class Gallery extends React.Component {
     this.state = {
       size: null,
       sizes: {},
-      children: [],
-      mounted: false
+      children: {},
+      mounted: false,
+      shouldReactResize: false
     }
     this.resetSizes = throttle(props.throttle, ::this.resetSizes)
     this.onItemMount = ::this.onItemMount
     this.onItemUnMount = ::this.onItemUnMount
     this.onItemChange = ::this.onItemChange
+    this.onResize = ::this.onResize
+    this.watchResize = ::this.watchResize
   }
 
   componentDidMount () {
-    window.addEventListener('resize', this.resetSizes)
-    this.resetSizes()
+    this.setState({
+      size: measure(this),
+      mounted: true
+    }, this.watchResize)
+  }
+
+  watchResize () {
+    // eslint-disable-next-line no-new
+    new ResizeSensor(ReactDOM.findDOMNode(this), this.onResize)
+  }
+
+  onResize () {
+    if (this.state.shouldReactResize) {
+      if (this.props.onResize) {
+        this.props.onResize(this)
+      }
+      this.resetSizes()
+    }
+    this.setState({shouldReactResize: true})
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState.shouldReactResize === true && !this.state.shouldReactResize) {
+      return false
+    }
+    return true
   }
 
   componentWillUnmount () {
-    window.removeEventListener('resize', this.resetSizes)
+    ResizeSensor.detach(this.el, this.onResize)
   }
 
   hasChanges (sizes, oldSizes) {
     const oldKeys = Object.keys(oldSizes)
     const keys = Object.keys(sizes)
-    if (oldKeys.length != keys.length)
+    if (oldKeys.length !== keys.length) {
       return true
+    }
     for (let i = 0; i < keys.length; i++) {
       const oldSize = oldSizes[oldKeys[i]]
       const size = sizes[keys[i]]
-      if (size.width != oldSize.width || size.height != oldSize.height) {
+      if (size.width !== oldSize.width || size.height !== oldSize.height) {
         return true
       }
     }
     return false
   }
-
   resetSizes () {
-    const sizes = this.state.children.reduce((sizes, item) => {
-      const size = measure(item)
-      sizes[item.props['gallery-key']] = size
+    const sizes = Object.keys(this.state.children).reduce((sizes, key) => {
+      const size = measure(this.state.children[key])
+      sizes[key] = size
       return sizes
     }, {})
     const size = measure(this)
-    const hasChanges = !this.state.size || this.state.size.width !== size.width || this.state.size.height !== size.height || this.hasChanges(sizes, this.state.sizes)
+    const hasChanges = !this.state.size ||
+      this.state.size.width !== size.width ||
+      this.state.size.height !== size.height ||
+      this.hasChanges(sizes, this.state.sizes)
     if (hasChanges) {
       this.setState({
         sizes: sizes,
@@ -102,59 +139,70 @@ export default class Gallery extends React.Component {
   onItemMount (item) {
     const sizes = this.state.sizes
     const children = this.state.children
-    children.push(item)
-
-    if (this.state.mounted) {
-      sizes[item.props['gallery-key']] = measure(item)
-      this.setState({sizes: sizes})
-    }
-
+    children[item.props['gallery-key']] = item
+    sizes[item.props['gallery-key']] = measure(item)
+    this.setState({sizes: sizes})
   }
 
   onItemUnMount (item) {
     delete this.state.sizes[item.props['gallery-key']]
     const children = this.state.children
-    children.splice(children.indexOf(item), 1)
+    delete children[item.props['gallery-key']]
     this.setState({sizes: this.state.sizes, children: children})
   }
 
-  render (){
+  render () {
     let propsClone = Object.assign({
-      component: 'ul',
+      wrapper: 'ul',
       className: 'react-gallery'
     }, this.props)
-    let {component, wrapper, gap, columns, center, onLayout, throttle, ...props} = propsClone
+    // eslint-disable-next-line no-unused-vars
+    let {component, wrapper, columns, center, onLayout, onResize, throttle,
+      gap, layout, rowHeight, columnWidth, centered, ...props} = propsClone
     var visible, rects, options
     if (this.state.size) {
-      visible = until(props.children, (child) => child.state && child.state.wait)
-      rects = visible.map((item, index)=> {
+      visible = props.children
+      rects = visible.map((item, index) => {
         return this.state.sizes[item.key] || {width: 0, height: 0}
       })
-      options = Object.assign({}, {
-          width: this.state.size.width,
-          height: Infinity,
-          items: rects,
-          gap: gap,
-          columns: columns
-        }, keys(props, ['size'])
-      )
+      let height = Infinity
+      if (layout === 'rows') {
+        height = propsClone.rowHeight
+      }
+      options = {
+        width: this.state.size.width,
+        height: height,
+        items: rects,
+        gap: gap || 0,
+        columns: columns,
+        layout: layout,
+        size: {
+          height: rowHeight,
+          width: columnWidth
+        }
+      }
       rects = pack(options)
-      if (this.props.centered) {
+      if (centered) {
         const width = getWidth(rects)
         const offset = (this.state.size.width - width) / 2
-        rects.forEach((rect)=> {rect.x += offset})
+        rects.forEach(rect => { rect.x += offset })
       }
     } else {
-      visible = []
+      visible = props.children
       rects = []
     }
+    if (component) {
+      props.component = component
+    }
     let height = getHeight(rects)
-    return React.createElement(wrapper || component, Object.assign(props, {style: {height: height}}),
-      visible.map((child, index)=> {
+    return React.createElement(wrapper || component,
+      Object.assign({}, props, {style: {height: height}}),
+      visible.map((child, index) => {
         return (
           <Item key={child.key}
             gallery-key={child.key}
             rect={rects[index]}
+            layout={layout}
             onMount={this.onItemMount}
             onUnMount={this.onItemUnMount}
             onResize={this.resetSizes}>
@@ -168,5 +216,8 @@ export default class Gallery extends React.Component {
 }
 
 Gallery.defaultProps = {
-  throttle: 100
+  throttle: 50,
+  layout: 'binpack'
 }
+
+export {ResizeSensor}

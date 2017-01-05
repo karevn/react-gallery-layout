@@ -1,8 +1,10 @@
 export function filter (items, predicate) {
   const result = []
-  for (let i = 0; i < items.length; i++)
-    if (predicate(items[i], i))
+  for (let i = 0; i < items.length; i++) {
+    if (predicate(items[i], i)) {
       result.push(items[i])
+    }
+  }
   return result
 }
 
@@ -22,7 +24,7 @@ export function until (items, predicate, addLast) {
 }
 
 export function keys (object, keys) {
-  return keys.reduce((obj, key)=> {
+  return keys.reduce((obj, key) => {
     obj[key] = object[key]
     return obj
   }, {})

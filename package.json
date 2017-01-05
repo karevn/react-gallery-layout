@@ -1,5 +1,5 @@
 {
-  "name": "react-gallery",
+  "name": "react-gallery-layout",
   "version": "0.1.0",
   "description": "React.js based gallery component",
   "main": "index.js",
@@ -17,9 +17,9 @@
     "binpack-2d": "^1.1.1",
     "classnames": "^2.2.3",
     "css-element-queries": "^0.3.2",
-    "layouts": "/Users/karevn/src/layouts",
-    "react": "^15.0.1",
-    "react-dom": "^15.0.1",
+    "card-layouts": "^0.1.0",
+    "react": "^15.4.1",
+    "react-dom": "^15.4.1",
     "throttle-debounce": "^1.0.1"
   },
   "devDependencies": {}
