@@ -1,5 +1,6 @@
 import binpack from 'binpack-2d'
-import layouts from 'card-layouts'
+import {rows, columns, grid} from 'card-layouts'
+const layouts = {rows, columns, grid}
 
 function getGap (gap, width) {
   if (Number.isInteger(gap)) {
