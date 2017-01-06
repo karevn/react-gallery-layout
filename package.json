@@ -14,10 +14,10 @@
   "author": "Nikolay Karev <karev.n@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "binpack-2d": "^1.1.1",
+    "binpack-2d": "^1.2.0",
     "classnames": "^2.2.3",
     "css-element-queries": "^0.3.2",
-    "card-layouts": "^0.1.0",
+    "card-layouts": "^0.2.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "throttle-debounce": "^1.0.1"
