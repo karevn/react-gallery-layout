@@ -15,12 +15,8 @@ function getGap (gap, width) {
   return gap
 }
 const runBinpack = options =>
-  binpack(
-    {width: options.width, height: Infinity},
-    options.items,
-    options.gap,
-    options.rtl ? sorters.leftwardTopToBottom : null
-  )
+  binpack({width: options.width, height: Infinity},
+    options.items, options.gap, options.rtl)
 const isBinpack = layout => layout === 'binpack' || !layout
 export default function pack (options) {
   options.gap = getGap(options.gap, options.width)
