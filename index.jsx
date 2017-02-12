@@ -159,26 +159,27 @@ export default class Gallery extends React.Component {
   }
 
   render () {
+    const state = this.state
     let propsClone = Object.assign({
       wrapper: 'ul',
       className: 'react-gallery'
     }, this.props)
     // eslint-disable-next-line no-unused-vars
     let {component, wrapper, columns, center, onLayout, onResize, throttle,
-      gap, layout, rowHeight, columnWidth, centered, ...props} = propsClone
+      gap, layout, rowHeight, columnWidth, centered, rtl, ...props} = propsClone
     var visible, rects, options
     if (this.props.children) {
-      if (this.state.size) {
+      if (state.size) {
         visible = array(props.children)
         rects = visible.map((item, index) => {
-          return this.state.sizes[item.key] || {width: 0, height: 0}
+          return state.sizes[item.key] || {width: 0, height: 0}
         })
         let height = Infinity
         if (layout === 'rows') {
           height = propsClone.rowHeight
         }
         options = {
-          width: this.state.size.width,
+          width: state.size.width,
           height: height,
           items: rects,
           gap: gap || 0,
@@ -187,12 +188,13 @@ export default class Gallery extends React.Component {
           size: {
             height: rowHeight,
             width: columnWidth
-          }
+          },
+          rtl: rtl
         }
         rects = pack(options)
         if (centered) {
           const width = getWidth(rects)
-          const offset = (this.state.size.width - width) / 2
+          const offset = (state.size.width - width) / 2
           rects.forEach(rect => { rect.x += offset })
         }
       } else {
