@@ -1,4 +1,4 @@
-import binpack, {sorters} from 'binpack-2d'
+import binpack from 'binpack-2d'
 import {rows, columns, grid} from 'card-layouts'
 const layouts = {rows, columns, grid}
 

@@ -8,6 +8,10 @@ import pack from './src/pack'
 import throttle from 'throttle-debounce/throttle'
 
 import ResizeSensor from './src/resize'
+import curry from 'curry'
+
+const add = curry(function add(a, b){ return a + b })
+const sub = curry(function (b, a) { return a - b })
 function array(thing) {
   const length = thing.length
   const result = []
@@ -37,12 +41,18 @@ function getHeight (rects) {
 }
 
 function getWidth (rects) {
-  return rects.reduce((width, rect) => {
+  const max = rects.reduce((width, rect) => {
     if (rect.x === undefined) {
       return width
     }
     return Math.max(width, rect.x + rect.width)
-  }, 0)
+  }, 0);
+  return max - rects.reduce((width, rect) => {
+    if (rect.x === undefined) {
+      return width
+    }
+    return Math.min(width, rect.x)
+  }, max)
 }
 
 export default class Gallery extends React.Component {
@@ -195,7 +205,8 @@ export default class Gallery extends React.Component {
         if (centered) {
           const width = getWidth(rects)
           const offset = (state.size.width - width) / 2
-          rects.forEach(rect => { rect.x += offset })
+          const f = rtl ? sub(offset) : add(offset)
+          rects.forEach(rect => { rect.x = f(rect.x) })
         }
       } else {
         visible = array(props.children)
