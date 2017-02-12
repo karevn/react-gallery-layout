@@ -8,7 +8,14 @@ import pack from './src/pack'
 import throttle from 'throttle-debounce/throttle'
 
 import ResizeSensor from './src/resize'
-
+function array(thing) {
+  const length = thing.length
+  const result = []
+  for(let i = 0; i < thing.length; i++) {
+    result.push(thing[i])
+  }
+  return result
+}
 function measure (component) {
   if (component.measure) {
     return component.measure()
@@ -160,35 +167,40 @@ export default class Gallery extends React.Component {
     let {component, wrapper, columns, center, onLayout, onResize, throttle,
       gap, layout, rowHeight, columnWidth, centered, ...props} = propsClone
     var visible, rects, options
-    if (this.state.size) {
-      visible = props.children
-      rects = visible.map((item, index) => {
-        return this.state.sizes[item.key] || {width: 0, height: 0}
-      })
-      let height = Infinity
-      if (layout === 'rows') {
-        height = propsClone.rowHeight
-      }
-      options = {
-        width: this.state.size.width,
-        height: height,
-        items: rects,
-        gap: gap || 0,
-        columns: columns,
-        layout: layout,
-        size: {
-          height: rowHeight,
-          width: columnWidth
+    if (this.props.children) {
+      if (this.state.size) {
+        visible = array(props.children)
+        rects = visible.map((item, index) => {
+          return this.state.sizes[item.key] || {width: 0, height: 0}
+        })
+        let height = Infinity
+        if (layout === 'rows') {
+          height = propsClone.rowHeight
         }
-      }
-      rects = pack(options)
-      if (centered) {
-        const width = getWidth(rects)
-        const offset = (this.state.size.width - width) / 2
-        rects.forEach(rect => { rect.x += offset })
+        options = {
+          width: this.state.size.width,
+          height: height,
+          items: rects,
+          gap: gap || 0,
+          columns: columns,
+          layout: layout,
+          size: {
+            height: rowHeight,
+            width: columnWidth
+          }
+        }
+        rects = pack(options)
+        if (centered) {
+          const width = getWidth(rects)
+          const offset = (this.state.size.width - width) / 2
+          rects.forEach(rect => { rect.x += offset })
+        }
+      } else {
+        visible = array(props.children)
+        rects = []
       }
     } else {
-      visible = props.children
+      visible = []
       rects = []
     }
     if (component) {
