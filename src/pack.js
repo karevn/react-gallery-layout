@@ -1,4 +1,4 @@
-import binpack from 'binpack-2d'
+import binpack, {sorters} from 'binpack-2d'
 import {rows, columns, grid} from 'card-layouts'
 const layouts = {rows, columns, grid}
 
@@ -14,12 +14,17 @@ function getGap (gap, width) {
   }
   return gap
 }
-
+const runBinpack = options =>
+  binpack(
+    {width: options.width, height: Infinity},
+    options.items,
+    options.gap,
+    options.rtl ? sorters.leftwardTopToBottom : null
+  )
+const isBinpack = layout => layout === 'binpack' || !layout
 export default function pack (options) {
   options.gap = getGap(options.gap, options.width)
-  if (options.layout === 'binpack' || !options.layout) {
-    return binpack({width: options.width, height: Infinity}, options.items, options.gap)
-  } else {
-    return layouts[options.layout](options)
-  }
+  return isBinpack(options.layout)
+    ? runBinpack(options)
+    : layouts[options.layout](options)
 }
