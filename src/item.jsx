@@ -9,11 +9,12 @@ export default class Item extends React.Component {
   }
 
   measure () {
-    if (this.props.children.props.width && this.props.children.props.height) {
-      return {
-        width: this.props.children.props.width,
-        height: this.props.children.props.height
-      }
+    const childProps = this.props.children.props
+    if (childProps.width && childProps.height) {
+      return {width: childProps.width, height: childProps.height}
+    }
+    if (this.refs.item.measure) {
+      return this.refs.item.measure()
     }
     const node = ReactDOM.findDOMNode(this)
     return {
@@ -48,7 +49,8 @@ export default class Item extends React.Component {
   render () {
     const props = Object.assign({}, this.props, {
       visible: !!this.props.rect,
-      rect: this.props.rect
+      rect: this.props.rect,
+      ref: 'item',
     })
     if (props.rect) {
       let transform = `translate(${props.rect.x}px, ${props.rect.y}px)`
