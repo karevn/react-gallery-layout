@@ -122,16 +122,17 @@ export default class Gallery extends React.Component {
     return false
   }
   resetSizes () {
-    const sizes = Object.keys(this.state.children).reduce((sizes, key) => {
-      const size = measure(this.state.children[key])
+    const state = this.state
+    const sizes = Object.keys(state.children).reduce((sizes, key) => {
+      const size = measure(state.children[key])
       sizes[key] = size
       return sizes
     }, {})
     const size = measure(this)
-    const hasChanges = !this.state.size ||
-      this.state.size.width !== size.width ||
-      this.state.size.height !== size.height ||
-      this.hasChanges(sizes, this.state.sizes)
+    const hasChanges = !state.size ||
+      state.size.width !== size.width ||
+      state.size.height !== size.height ||
+      this.hasChanges(sizes, state.sizes)
     if (hasChanges) {
       this.setState({
         sizes: sizes,
@@ -219,9 +220,9 @@ export default class Gallery extends React.Component {
     if (component) {
       props.component = component
     }
-    let height = getHeight(rects)
+    const height = getHeight(rects)
     return React.createElement(wrapper || component,
-      Object.assign({}, props, {style: {height: height}}),
+      Object.assign({}, props, {style: {height}}),
       visible.map((child, index) => {
         return (
           <Item key={child.key}
