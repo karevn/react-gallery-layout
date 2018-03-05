@@ -16,7 +16,7 @@ export default {
   external: [],
   plugins: [
     sass({
-      output: 'reactbox.css',
+      output: 'react-gallery-layout.css',
       include: ['**/*.sass'],
       options: {
         indentedSyntax: true,

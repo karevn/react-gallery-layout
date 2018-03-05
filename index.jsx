@@ -1,4 +1,4 @@
-require('./sass/index.sass')
+import './sass/index.sass'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
