@@ -5,13 +5,12 @@ import ReactDOM from 'react-dom'
 import Item from './src/item'
 import pack from './src/pack'
 
-import throttle from 'throttle-debounce/throttle'
+const throttle = require('throttle-debounce/throttle')
 
 import ResizeSensor from './src/resize'
-import curry from 'curry'
 
-const add = curry(function add(a, b){ return a + b })
-const sub = curry(function (b, a) { return a - b })
+const add = a => b => a + b
+const sub = a => b => a - b
 function array(thing) {
   const length = thing.length
   const result = []

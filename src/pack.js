@@ -1,5 +1,5 @@
-import binpack from 'binpack-2d'
-import {rows, columns, grid} from 'card-layouts'
+const binpack = require('binpack-2d')
+const {rows, columns, grid} = require('card-layouts')
 const layouts = {rows, columns, grid}
 
 function getGap (gap, width) {
