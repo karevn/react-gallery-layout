@@ -1,6 +1,6 @@
 {
   "name": "react-gallery-layout",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "React.js based gallery component",
   "main": "lib/index.js",
   "scripts": {
@@ -15,7 +15,8 @@
   "files": [
     "lib/**",
     "*.md",
-    "react-gallery-layout.css"
+    "react-gallery-layout.css",
+    "src/resize.js"
   ],
   "author": "Nikolay Karev <karev.n@gmail.com>",
   "license": "MIT",
