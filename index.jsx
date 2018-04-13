@@ -170,10 +170,11 @@ export default class Gallery extends React.Component {
 
   render () {
     const state = this.state
-    let propsClone = Object.assign({
+    let propsClone = {
       wrapper: 'ul',
-      className: 'react-gallery'
-    }, this.props)
+      className: 'react-gallery',
+      ...this.props
+    }
     // eslint-disable-next-line no-unused-vars
     let {component, wrapper, columns, center, onLayout, onResize, throttle,
       gap, layout, rowHeight, columnWidth, centered, rtl, ...props} = propsClone
@@ -221,7 +222,7 @@ export default class Gallery extends React.Component {
     }
     const height = getHeight(rects)
     return React.createElement(wrapper || component,
-      Object.assign({}, props, {style: {height}}),
+      {...props, style: {height}},
       visible.map((child, index) => {
         return (
           <Item key={child.key}

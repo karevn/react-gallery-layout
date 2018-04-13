@@ -26,12 +26,6 @@ export default {
       }
     }),
     external(),
-    babel({
-      babelrc: false,
-      exclude: 'node_modules/**',
-      presets: [ [ 'env', { modules: false } ], 'stage-0', 'react' ],
-      plugins: [ 'external-helpers', 'jsx-control-statements' ]
-    }),
     cjs({
       exclude: 'node_modules/process-es6/**',
       include: [
@@ -43,6 +37,13 @@ export default {
         'node_modules/prop-types/**',
       ]
     }),
+    babel({
+      babelrc: false,
+      exclude: 'node_modules/**',
+      presets: [ [ 'env', { modules: false } ], 'stage-0', 'react' ],
+      plugins: [ 'external-helpers', 'jsx-control-statements' ]
+    }),
+
     globals(),
 
     replace({ 'process.env.NODE_ENV': JSON.stringify('development') }),

@@ -47,24 +47,25 @@ export default class Item extends React.Component {
   }
 
   render () {
-    const props = Object.assign({}, this.props, {
+    const props = {
+      ...this.props,
       visible: !!this.props.rect,
       rect: this.props.rect,
       ref: 'item',
-    })
+    }
     if (props.rect) {
       let transform = `translate(${props.rect.x}px, ${props.rect.y}px)`
       if (props.style && props.style.transform) {
         transform = transform + ' ' + props.style.transform
       }
-      props.style = Object.assign({}, props.style, {
+      props.style = {
+        ...props.style,
         transform: transform,
         WebkitTransform: transform,
         OTransform: transform,
         MsTransform: transform,
         MozTransform: transform
       }
-      )
       if (this.props.layout !== 'binpack') {
         props.style.width = props.rect.width + 'px'
         props.style.height = props.rect.height + 'px'
